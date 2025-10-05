@@ -1,0 +1,8 @@
+"""Private implementation details for Julia rules."""
+
+exports_files([
+    "julia_binary.bzl",
+    "julia_library.bzl",
+    "julia_test.bzl",
+    "providers.bzl",
+])

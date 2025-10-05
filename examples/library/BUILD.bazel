@@ -1,0 +1,20 @@
+"""Library example demonstrating julia_library."""
+
+load("//julia:defs.bzl", "julia_binary", "julia_library", "julia_test")
+
+julia_library(
+    name = "mathlib",
+    srcs = ["mathlib.jl"],
+)
+
+julia_binary(
+    name = "calculator",
+    main = "calculator.jl",
+    deps = [":mathlib"],
+)
+
+julia_test(
+    name = "mathlib_test",
+    main = "mathlib_test.jl",
+    deps = [":mathlib"],
+)

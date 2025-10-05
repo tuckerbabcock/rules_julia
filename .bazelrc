@@ -1,0 +1,16 @@
+# Bazel configuration
+
+# Show test output on failure
+test --test_output=errors
+
+# Verbose failures
+build --verbose_failures
+
+# Platform support
+build --enable_platform_specific_config
+
+# CI configuration
+build:ci --announce_rc
+build:ci --show_timestamps
+build:ci --keep_going
+test:ci --test_output=all

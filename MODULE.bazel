@@ -1,0 +1,36 @@
+"""Bazel module definition for Julia toolchain."""
+
+module(
+    name = "rules_julia",
+    version = "0.1.0",
+    compatibility_level = 1,
+)
+
+# Toolchain dependencies
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+
+# Julia toolchain configuration
+julia_toolchain_extension = use_extension("//toolchain:extensions.bzl", "julia_toolchain_extension")
+
+# Default: hermetic stable version
+julia_toolchain_extension.toolchain(
+    name = "julia",
+    hermetic = True,
+    version = "1.11.7",
+)
+use_repo(
+    julia_toolchain_extension,
+    "julia_linux_aarch64",
+    "julia_linux_x86_64",
+    "julia_macos_aarch64",
+    "julia_macos_x86_64",
+)
+
+# Register toolchains
+register_toolchains(
+    "@julia_linux_x86_64//:julia_toolchain",
+    "@julia_linux_aarch64//:julia_toolchain",
+    "@julia_macos_x86_64//:julia_toolchain",
+    "@julia_macos_aarch64//:julia_toolchain",
+)

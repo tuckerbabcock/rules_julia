@@ -1,0 +1,17 @@
+"""Julia toolchain type definition.
+
+This BUILD file defines the toolchain_type that rules can use to request
+Julia toolchain resolution via ctx.toolchains["@rules_julia//toolchain:toolchain_type"].
+"""
+
+toolchain_type(
+    name = "toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
+# Export bzl files for documentation and IDE support
+exports_files([
+    "defs.bzl",
+    "repositories.bzl",
+    "toolchain.bzl",
+])

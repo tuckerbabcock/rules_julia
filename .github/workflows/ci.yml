@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  buildifier:
+    name: Buildifier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      
+      - name: Install buildifier
+        run: go install github.com/bazelbuild/buildtools/buildifier@latest
+      
+      - name: Run buildifier
+        run: buildifier -lint=warn -warnings=all -r .
+
+  test-hermetic:
+    name: Tests (${{ matrix.os }}, Julia ${{ matrix.julia_version }}, Bazel ${{ matrix.bazel_version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        julia_version: ["1.11.7", "1.10.10"]
+        bazel_version: ["8.0.0", "latest"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ matrix.julia_version }}-${{ matrix.bazel_version }}-${{ hashFiles('MODULE.bazel', 'WORKSPACE') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-${{ matrix.julia_version }}-${{ matrix.bazel_version }}-
+            bazel-${{ runner.os }}-${{ matrix.julia_version }}-
+            bazel-${{ runner.os }}-
+
+      - name: Set Julia version
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            sed -i '' 's/version = "1.11.7"/version = "${{ matrix.julia_version }}"/' MODULE.bazel
+          else
+            sed -i 's/version = "1.11.7"/version = "${{ matrix.julia_version }}"/' MODULE.bazel
+          fi
+        shell: bash
+
+      - name: Run all tests
+        run: bazelisk test //...
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel_version }}
+
+      - name: Build examples
+        run: bazelisk build //examples/...
+        env:
+          USE_BAZEL_VERSION: ${{ matrix.bazel_version }}

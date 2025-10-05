@@ -1,0 +1,51 @@
+"""Test suite for Julia toolchain."""
+
+load("//julia:defs.bzl", "julia_binary", "julia_library", "julia_test")
+
+# Test basic binary execution
+julia_binary(
+    name = "basic_binary",
+    main = "basic_binary.jl",
+)
+
+# Test library creation and usage
+julia_library(
+    name = "testlib",
+    srcs = ["testlib.jl"],
+)
+
+julia_binary(
+    name = "binary_with_dep",
+    main = "binary_with_dep.jl",
+    deps = [":testlib"],
+)
+
+# Test suite
+julia_test(
+    name = "basic_test",
+    main = "basic_test.jl",
+)
+
+julia_test(
+    name = "library_test",
+    main = "library_test.jl",
+    deps = [":testlib"],
+)
+
+# Test transitive dependencies
+julia_library(
+    name = "dep_a",
+    srcs = ["dep_a.jl"],
+)
+
+julia_library(
+    name = "dep_b",
+    srcs = ["dep_b.jl"],
+    deps = [":dep_a"],
+)
+
+julia_test(
+    name = "transitive_deps_test",
+    main = "transitive_deps_test.jl",
+    deps = [":dep_b"],
+)
