@@ -1,0 +1,55 @@
+"""Platform definitions for Julia toolchain.
+
+These platform definitions can be used to target specific Julia architectures
+when building multi-platform binaries.
+"""
+
+package(default_visibility = ["//visibility:public"])
+
+# Linux platforms
+platform(
+    name = "linux_x86_64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+platform(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+# macOS platforms
+platform(
+    name = "macos_x86_64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+platform(
+    name = "macos_aarch64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+# Convenience aliases
+alias(
+    name = "linux",
+    actual = ":linux_x86_64",
+)
+
+alias(
+    name = "macos",
+    actual = select({
+        "@platforms//cpu:aarch64": ":macos_aarch64",
+        "//conditions:default": ":macos_x86_64",
+    }),
+)

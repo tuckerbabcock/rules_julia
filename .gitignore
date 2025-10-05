@@ -1,0 +1,39 @@
+# Bazel build outputs
+/bazel-*
+
+# Bazel convenience symlinks
+/bazel-bin
+/bazel-genfiles
+/bazel-out
+/bazel-testlogs
+/bazel-rules_julia
+
+# Bazel module lock (auto-generated)
+MODULE.bazel.lock
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test outputs
+*.log
+test-outputs/
+
+# Julia
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+deps/deps.jl
+Manifest.toml
+

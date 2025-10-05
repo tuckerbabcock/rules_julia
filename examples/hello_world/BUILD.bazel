@@ -1,0 +1,8 @@
+"""Hello World example."""
+
+load("//julia:defs.bzl", "julia_binary")
+
+julia_binary(
+    name = "hello",
+    main = "hello.jl",
+)
